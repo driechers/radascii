@@ -1,6 +1,7 @@
 #include <opencv2/highgui/highgui_c.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[41m"
@@ -11,8 +12,11 @@
 #define KCYN  "\x1B[46m"
 #define KWHT  "\x1B[47m"
 
+#define COLOR_COUNT sizeof(pixelColors)/3/sizeof(int)
+
 int pixelColors[][3] =
 {
+    {255, 255, 255}, // Nothing
     {231, 233,   4}, // DB05
     {244, 159,   1}, // DB10
     {244,   0,   3}, // DB15
@@ -28,6 +32,7 @@ int pixelColors[][3] =
 // TODO: smart colors ie check for 256 support
 char *escapes[] =
 {
+    KNRM,
     KCYN,
     KCYN,
     KBLU,
@@ -49,9 +54,9 @@ void modeImage(IplImage *mode, IplImage *img)
 
     for(int row=0; row < mH; row++) {
         for(int col=0; col < mW; col++) {
-//TODO: Fix use of 10
 //TODO: add blank to mode and weight such that color takes priority
-            int count[10] = {0,0,0,0,0,0,0,0,0,0};
+            int count[COLOR_COUNT];
+            memset(count, 0, COLOR_COUNT*sizeof(int));
 
             for(int y=row*h/mH; y < (row+1)*h/mH; y++) {
                 for(int x=col*w/mW; x < (col+1)*w/mW; x++) {
@@ -59,7 +64,7 @@ void modeImage(IplImage *mode, IplImage *img)
                     uint8_t g = img->imageData[3*(y*w+x)+1];
                     uint8_t r = img->imageData[3*(y*w+x)+2];
 
-                    for(int color=0; color < 10; color++) {
+                    for(int color=0; color < COLOR_COUNT; color++) {
                         if(pixelColors[color][0] == b && 
                            pixelColors[color][1] == g &&
                            pixelColors[color][2] == r)
@@ -70,7 +75,7 @@ void modeImage(IplImage *mode, IplImage *img)
 
             int max=0;
             int maxi=0;
-            for(int i=0; i<10;i++) {
+            for(int i=0; i<COLOR_COUNT;i++) {
                 if(count[i] > max){
                     max = count[i];
                     maxi = i;
@@ -109,7 +114,7 @@ void drawRadar(char *asciiFile, IplImage *mode)
             uint8_t r = mode->imageData[3*(row*mW+col)+2];
 
             char *escape = "";
-            for(int color=0; color < 10; color++) {
+            for(int color=0; color < COLOR_COUNT; color++) {
                 if(pixelColors[color][0] == b && 
                    pixelColors[color][1] == g &&
                    pixelColors[color][2] == r) {
