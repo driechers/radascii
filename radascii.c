@@ -1,7 +1,14 @@
-#include <opencv2/highgui/highgui_c.h>
+#define  _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 500
+
+#include <ftw.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <curl/curl.h>
+#include <opencv2/highgui/highgui_c.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[41m"
@@ -13,6 +20,8 @@
 #define KWHT  "\x1B[47m"
 
 #define COLOR_COUNT sizeof(pixelColors)/3/sizeof(int)
+
+static char imageLocation[]="/tmp/tmp.XXXXXX";
 
 int pixelColors[][3] =
 {
@@ -45,6 +54,44 @@ char *escapes[] =
     KRED,
 };
 
+void createImageLocation()
+{
+    mkdtemp(imageLocation);
+}
+
+static int rmFiles(const char *pathname, const struct stat *sbuf, int type, struct FTW *ftwb)
+{
+    remove(pathname);
+    return 0;
+}
+
+void cleanImageLocation()
+{
+    nftw(imageLocation, rmFiles,10, FTW_DEPTH|FTW_MOUNT|FTW_PHYS);
+}
+
+void downloadImage(char *filePath) {
+    CURL *curl;
+    FILE *fp;
+    CURLcode res;
+    char *url = "https://radar.weather.gov/lite/NCR/DVN_0.png";
+
+    strcpy(filePath, imageLocation);
+    strcat(filePath, "/DSN_0.png");
+
+    curl = curl_easy_init();
+    if (curl) {
+        fp = fopen(filePath,"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.47.0");
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        fclose(fp);
+    }
+}
+
 void modeImage(IplImage *mode, IplImage *img)
 {
     int h = img->height;
@@ -54,7 +101,6 @@ void modeImage(IplImage *mode, IplImage *img)
 
     for(int row=0; row < mH; row++) {
         for(int col=0; col < mW; col++) {
-//TODO: add blank to mode and weight such that color takes priority
             int count[COLOR_COUNT];
             memset(count, 0, COLOR_COUNT*sizeof(int));
 
@@ -131,9 +177,11 @@ void drawRadar(char *asciiFile, IplImage *mode)
 
 int main(void)
 {
-    //TODO Download image with libcurl
+    createImageLocation();
+    char imagePath[FILENAME_MAX];
+    downloadImage(imagePath);
     //TODO grab location from config
-    IplImage* radar = cvLoadImage("DVN_0.png", CV_LOAD_IMAGE_COLOR);
+    IplImage* radar = cvLoadImage(imagePath, CV_LOAD_IMAGE_COLOR);
     IplImage* mode = cvCreateImage(cvSize(80,24), IPL_DEPTH_8U, 3);
     if(radar == NULL)
             return -1;
@@ -143,11 +191,10 @@ int main(void)
     //TODO Add more locations!
     drawRadar("dvn.txt", mode);
 
-    //cvShowImage("Image", radar);
-    //cvShowImage("mode", mode);
     cvWaitKey(0);
     cvReleaseImage(&radar);
     cvReleaseImage(&mode);
+    cleanImageLocation();
 
     return 0;
 }
