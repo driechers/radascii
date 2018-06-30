@@ -18,6 +18,9 @@
 #define KMAG  "\x1B[45m"
 #define KCYN  "\x1B[46m"
 #define KWHT  "\x1B[47m"
+#define KCLFT "\x1B[80C"
+#define KCUP  "\x1B[26A"
+#define KCDN  "\x1B[26B"
 
 #define COLOR_COUNT sizeof(pixelColors)/3/sizeof(int)
 
@@ -70,14 +73,18 @@ void cleanImageLocation()
     nftw(imageLocation, rmFiles,10, FTW_DEPTH|FTW_MOUNT|FTW_PHYS);
 }
 
-void downloadImage(char *filePath) {
+// copies to filePath which must be of size FILENAME_MAX
+// location is 3 char location code used by national weather service
+// frame 0 is most recent and it goes up to 7 aproximately 8 min apart
+void downloadImage(char *filePath, char *location, int frame) {
     CURL *curl;
     FILE *fp;
     CURLcode res;
-    char *url = "https://radar.weather.gov/lite/NCR/DVN_0.png";
+    char url[50];
+    char fileName[11];
 
-    strcpy(filePath, imageLocation);
-    strcat(filePath, "/DSN_0.png");
+    snprintf(url, 50,  "https://radar.weather.gov/lite/NCR/%s_%d.png", location, frame);
+    snprintf(filePath, FILENAME_MAX, "%s/%s_%d.png", imageLocation, location, frame);
 
     curl = curl_easy_init();
     if (curl) {
@@ -175,25 +182,39 @@ void drawRadar(char *asciiFile, IplImage *mode)
     }
 }
 
-int main(void)
+void drawFrame(char *location, int frame)
 {
-    createImageLocation();
     char imagePath[FILENAME_MAX];
-    downloadImage(imagePath);
-    //TODO grab location from config
+    downloadImage(imagePath, location, frame);
     IplImage* radar = cvLoadImage(imagePath, CV_LOAD_IMAGE_COLOR);
     IplImage* mode = cvCreateImage(cvSize(80,24), IPL_DEPTH_8U, 3);
-    if(radar == NULL)
-            return -1;
 
     //TODO Crop out border
     modeImage(mode, radar);
-    //TODO Add more locations!
-    drawRadar("dvn.txt", mode);
-
-    cvWaitKey(0);
+    char asciiFile[8];
+    snprintf(asciiFile, 8, "%s.txt", location);
+    drawRadar(asciiFile, mode);
     cvReleaseImage(&radar);
     cvReleaseImage(&mode);
+}
+
+void playAnimation(char *location)
+{
+    for(int frame=7; frame >= 0; frame--) {
+        drawFrame(location, frame);
+        puts(KCLFT);
+        puts(KCUP);
+    }
+    puts(KCDN);
+}
+
+
+int main(void)
+{
+    createImageLocation();
+    //TODO Add more locations!
+    //TODO grab location from config
+    playAnimation("DVN");
     cleanImageLocation();
 
     return 0;
