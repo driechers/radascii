@@ -1,6 +1,7 @@
 #define  _POSIX_C_SOURCE 200809L
 #define _XOPEN_SOURCE 500
 
+#include <errno.h>
 #include <ftw.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -73,9 +74,10 @@ void cleanImageLocation()
     nftw(imageLocation, rmFiles,10, FTW_DEPTH|FTW_MOUNT|FTW_PHYS);
 }
 
-// copies to filePath which must be of size FILENAME_MAX
+// Copies to filePath which must be of size FILENAME_MAX
 // location is 3 char location code used by national weather service
 // frame 0 is most recent and it goes up to 7 aproximately 8 min apart
+// TODO reduce webprofile by downloading only every 7 min
 void downloadImage(char *filePath, char *location, int frame) {
     CURL *curl;
     FILE *fp;
@@ -155,8 +157,14 @@ void drawRadar(char *asciiFile, IplImage *mode)
     int mH = mode->height;
     int mW = mode->width;
 
+    // TODO check if valid and supported location.
     char art[24*81];
     FILE *f = fopen(asciiFile, "r");
+    if(!f) {
+        printf("Could not open ascii art file for location.\n%s", strerror(errno));
+        exit(-1);
+    }
+
     fread(art, 24*81, 1, f);
     fclose(f);
 
@@ -185,6 +193,7 @@ void drawRadar(char *asciiFile, IplImage *mode)
 void drawFrame(char *location, int frame)
 {
     char imagePath[FILENAME_MAX];
+    //TODO consistent wait time between frames
     downloadImage(imagePath, location, frame);
     IplImage* radar = cvLoadImage(imagePath, CV_LOAD_IMAGE_COLOR);
     IplImage* mode = cvCreateImage(cvSize(80,24), IPL_DEPTH_8U, 3);
@@ -205,16 +214,72 @@ void playAnimation(char *location)
         puts(KCLFT);
         puts(KCUP);
     }
-    puts(KCDN);
 }
 
-
-int main(void)
+void usage()
 {
-    createImageLocation();
+    printf("Usage:\n\n"
+           "radascii -s <site> [options]\n"
+           "\tDefault behavior is to display the most recent radar image.\n"
+           "\t-h Dispaly this menu.\n"
+           "\t-a Play radar animation once.\n"
+           "\t-l Continuously play radar loop.\n");
+}
+
+void getOptions(int *loop, int *animated, char **site, int argc, char **argv)
+{
+    int opt;
+
+    while((opt=getopt(argc, argv, "lahs:")) != -1 )  {
+        switch(opt) {
+            case 'l':
+                *loop = 1;
+                break;
+            case 'a':
+                *animated = 1;
+                break;
+            case 'h':
+                usage();
+                exit(0);
+            case 's':
+                *site = optarg;
+                break;
+            default:
+                usage();
+                exit(-1);
+        }
+    }
+
+    if(!*site) {
+        usage();
+        exit(-1);
+    }
+}
+
+int main(int argc, char **argv)
+{
     //TODO Add more locations!
-    //TODO grab location from config
-    playAnimation("DVN");
+    int loop = 0;
+    int animated = 0;
+    char *site = NULL;
+
+    getOptions(&loop, &animated, &site, argc, argv);
+
+    // TODO cleanup when loop is killed by SIGTERM
+    createImageLocation();
+
+    if(loop) {
+        while(1)
+            playAnimation(site);
+    }
+    else if(animated) {
+        playAnimation(site);
+        puts(KCDN);
+    }
+    else {
+        drawFrame(site, 0);
+    }
+
     cleanImageLocation();
 
     return 0;
