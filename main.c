@@ -7,6 +7,17 @@
 #include "fetch.h"
 #include "vt_one_hundrify.h"
 
+//TODO support looping
+//TODO support animation
+struct args
+{
+	int loop;
+	int animated;
+	char *map_file;
+	char *test_image;
+	int x;
+	int y;
+};
 
 void usage()
 {
@@ -22,35 +33,34 @@ void usage()
            "\t-l Continuously play radar loop.\n");
 }
 
-// TODO support panning
 // TODO support console size
-void getOptions(int *loop, int *animated, char **map_file, char **test_image, int *x, int *y, int argc, char **argv)
+void getOptions(struct args *args, int argc, char **argv)
 {
 	int opt;
 
 	// Defaults
 	char *str_x = "0";
 	char *str_y = "0";
-	*map_file = "usmca.txt";
-	*test_image = NULL;
+	args->map_file = "usmca.txt";
+	args->test_image = NULL;
 
 	// Process Args
 	while((opt=getopt(argc, argv, "lahm:t:x:y:")) != -1 )  {
 		switch(opt) {
 			case 'l':
-				*loop = 1;
+				args->loop = 1;
 				break;
 			case 'a':
-				*animated = 1;
+				args->animated = 1;
 				break;
 			case 'h':
 				usage();
 				exit(0);
 			case 'm':
-				*map_file = optarg;
+				args->map_file = optarg;
 				break;
 			case 't':
-				*test_image = optarg;
+				args->test_image = optarg;
 				break;
 			case 'x':
 				str_x = optarg;
@@ -65,8 +75,8 @@ void getOptions(int *loop, int *animated, char **map_file, char **test_image, in
 	}
 
 	// Convert args
-	*x = atoi(str_x);
-	*y = atoi(str_y);
+	args->x = atoi(str_x);
+	args->y = atoi(str_y);
 }
 
 
@@ -74,25 +84,17 @@ void getOptions(int *loop, int *animated, char **map_file, char **test_image, in
 int main(int argc, char **argv)
 {
 	struct map map;
+	struct args args;
 	int r = 0;
-	//TODO support looping
-	int loop = 0;
-	//TODO support animation
-	int animated = 0;
-	int pan_x = 0;
-	int pan_y = 0;
-	char *map_file = NULL;
-	char *test_image = NULL;
 	char img_dir[]="/tmp/tmp.XXXXXX";
 	char img_path[512];
 
-	getOptions(&loop, &animated, &map_file, &test_image, &pan_x, &pan_y, argc, argv);
-	printf("%d %d\n", pan_x, pan_y);
+	getOptions(&args, argc, argv);
 
-	r = load_map(&map, "usmca.txt");
+	r = load_map(&map, args.map_file);
 
-	if(test_image)
-		r = vt_one_hundrify(&map, "test.png");
+	if(args.test_image)
+		r = vt_one_hundrify(&map, args.test_image);
 	else {
 		// Create dir for frames
     		mkdtemp(img_dir);
@@ -111,10 +113,8 @@ int main(int argc, char **argv)
     		remove(img_dir);
 	}
 
-	map.panx = pan_x;
-	map.pany = pan_y;
-	//map.panx = 200;
-	//map.pany = 0;
+	map.panx = args.x;
+	map.pany = args.y;
 	print_map(&map);
 	free_map(&map);
 
