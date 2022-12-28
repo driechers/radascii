@@ -14,7 +14,6 @@ int load_map(struct map *map, char *filename)
 	fscanf(fp, "height: %d\n", &map->h);
 	fscanf(fp, "image width: %d\n", &map->wpx);
 	fscanf(fp, "image height: %d\n", &map->hpx);
-	// TODO use startx and starty in vt on hundrify
 	fscanf(fp, "start pixel x: %d\n", &map->startx);
 	fscanf(fp, "start pixel y: %d\n", &map->starty);
 	fgets(map->radar_url, 512, fp);

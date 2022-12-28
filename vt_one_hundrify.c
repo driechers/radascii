@@ -122,8 +122,9 @@ int vt_one_hundrify(struct map *map, char *filename)
 		int count[color_count];
 		memset(count, 0, color_count*sizeof(int));
 
-		for(int y=row*h/mH; y < (row+1)*h/mH; y++)
-		for(int x=col*w/mW; x < (col+1)*w/mW; x++) {
+		// startx and starty have limited testing
+		for(int y=row*h/mH + map->starty; y < (row+1)*h/mH + map->starty; y++)
+		for(int x=col*w/mW + map->startx; x < (col+1)*w/mW + map->startx; x++) {
 			png_bytep img_row = png.image[y];
 			png_bytep px = &(img_row[x * 4]);
 			int r= px[0];
