@@ -16,13 +16,13 @@ enum color
 struct map
 {
 	// File data
-	int h; 			// Height in chars
 	int w; 			// Width in chars
-	int hpx;	 	// Height in pixels
+	int h; 			// Height in chars
 	int wpx; 		// Width in pixels
+	int hpx;	 	// Height in pixels
 	int startx; 		// starting pixel x
 	int starty; 		// starting pixel y
-		    		// TODO nowcoast position
+	char radar_url[512];	// URL to download radar image
 	char *data; 		// ascii art map no newlines
 	// Runtime data
 	int panx; 		// Where to start printing from x

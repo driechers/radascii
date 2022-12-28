@@ -1,3 +1,10 @@
+width: 470
+height: 120
+image width: 941
+image height: 513
+start pixel x: 0
+start pixel y: 0
+https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C1671846900000&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image
                |      \ \   \/ |       \_                                                         |                                                        |                                             |                                                                  /              \_                                        |       /            ____/                                                                  \ \           \     |                                
                 \_/\   \ \     | \\ \    |                                                        |                                                        |                                             |                                                               __/                 -____                                   |      /           _/                                                                       | /            \_   \_                               
                     |  |   \  /  / \ \  /                                                         |                                                        |                                             |                                                             _/                         \__                                 \   _/           /                                                                         \ \              \_   \__                            

@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 		unsigned long long now =
 			(unsigned long long)(tv.tv_sec) * 1000 +
 			(unsigned long long)(tv.tv_usec) / 1000;
-		r = download_radar_image(NULL, now, img_path);
+		r = download_radar_image(&map, now, img_path);
 		r = vt_one_hundrify(&map, img_path);
     		remove(img_path);
 

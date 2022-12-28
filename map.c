@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "map.h"
 #include "vt_one_hundrify.h"
@@ -9,14 +10,15 @@ int load_map(struct map *map, char *filename)
 	int h;
 	// TODO error check
 	FILE *fp = fopen(filename, "r");
-	// TODO load file data
-	map->h = 120;
-	map->w = 470;
-	map->hpx = 513;
-	map->wpx = 941;
+	fscanf(fp, "width: %d\n", &map->w);
+	fscanf(fp, "height: %d\n", &map->h);
+	fscanf(fp, "image width: %d\n", &map->wpx);
+	fscanf(fp, "image height: %d\n", &map->hpx);
 	// TODO use startx and starty in vt on hundrify
-	map->startx = 0;
-	map->starty = 0;
+	fscanf(fp, "start pixel x: %d\n", &map->startx);
+	fscanf(fp, "start pixel y: %d\n", &map->starty);
+	fgets(map->radar_url, 512, fp);
+	map->radar_url[strnlen(map->radar_url, 512)-1] = 0;
 
 	// Init runtime data
 	map->panx = 0;
