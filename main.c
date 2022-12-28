@@ -23,18 +23,18 @@ struct args
 
 void usage()
 {
-    printf("Usage:\n\n"
-           "radascii [options]\n"
-           "\tDefault behavior is to display the most recent radar image over Us Mexico Canida map.\n"
-	   "\t-t <test radar png file>\n"
-	   "\t-m <ascii map file>\n"
-	   "\t-x <x coord to pan to>\n"
-	   "\t-y <y coord to pan to>\n"
-	   "\t-r <console rows>\n"
-	   "\t-c <console columns>\n"
-           "\t-h Dispaly this menu.\n"
-           "\t-a Play radar animation once.\n"
-           "\t-l Continuously play radar loop.\n");
+	printf("Usage:\n\n"
+		"radascii [options]\n"
+		"\tDefault behavior is to display the most recent radar image over Us Mexico Canida map.\n"
+		"\t-t <test radar png file>\n"
+		"\t-m <ascii map file>\n"
+		"\t-x <x coord to pan to>\n"
+		"\t-y <y coord to pan to>\n"
+		"\t-r <console rows>\n"
+		"\t-c <console columns>\n"
+		"\t-h Dispaly this menu.\n"
+		"\t-a Play radar animation once.\n"
+		"\t-l Continuously play radar loop.\n");
 }
 
 void getOptions(struct args *args, int argc, char **argv)
