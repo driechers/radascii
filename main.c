@@ -15,6 +15,8 @@ void usage()
            "\tDefault behavior is to display the most recent radar image over Us Mexico Canida map.\n"
 	   "\t-t <test radar png file>\n"
 	   "\t-m <ascii map file>\n"
+	   "\t-x <x coord to pan to>\n"
+	   "\t-y <y coord to pan to>\n"
            "\t-h Dispaly this menu.\n"
            "\t-a Play radar animation once.\n"
            "\t-l Continuously play radar loop.\n");
@@ -22,16 +24,18 @@ void usage()
 
 // TODO support panning
 // TODO support console size
-void getOptions(int *loop, int *animated, char **map_file, char **test_image, int argc, char **argv)
+void getOptions(int *loop, int *animated, char **map_file, char **test_image, int *x, int *y, int argc, char **argv)
 {
 	int opt;
 
 	// Defaults
+	char *str_x = "0";
+	char *str_y = "0";
 	*map_file = "usmca.txt";
 	*test_image = NULL;
 
 	// Process Args
-	while((opt=getopt(argc, argv, "lahm:t:")) != -1 )  {
+	while((opt=getopt(argc, argv, "lahm:t:x:y:")) != -1 )  {
 		switch(opt) {
 			case 'l':
 				*loop = 1;
@@ -48,11 +52,21 @@ void getOptions(int *loop, int *animated, char **map_file, char **test_image, in
 			case 't':
 				*test_image = optarg;
 				break;
+			case 'x':
+				str_x = optarg;
+				break;
+			case 'y':
+				str_y = optarg;
+				break;
 			default:
 				usage();
 				exit(-1);
 		}
 	}
+
+	// Convert args
+	*x = atoi(str_x);
+	*y = atoi(str_y);
 }
 
 
@@ -65,12 +79,15 @@ int main(int argc, char **argv)
 	int loop = 0;
 	//TODO support animation
 	int animated = 0;
+	int pan_x = 0;
+	int pan_y = 0;
 	char *map_file = NULL;
 	char *test_image = NULL;
 	char img_dir[]="/tmp/tmp.XXXXXX";
 	char img_path[512];
 
-	getOptions(&loop, &animated, &map_file, &test_image, argc, argv);
+	getOptions(&loop, &animated, &map_file, &test_image, &pan_x, &pan_y, argc, argv);
+	printf("%d %d\n", pan_x, pan_y);
 
 	r = load_map(&map, "usmca.txt");
 
@@ -94,8 +111,8 @@ int main(int argc, char **argv)
     		remove(img_dir);
 	}
 
-	map.panx = 60;
-	map.pany = 0;
+	map.panx = pan_x;
+	map.pany = pan_y;
 	//map.panx = 200;
 	//map.pany = 0;
 	print_map(&map);
