@@ -1,10 +1,11 @@
 #include <curl/curl.h>
-#include <sys/time.h>
 
 #include "map.h"
+#include "fetch.h"
 
 // TODO error checking
-void download_image(char *fmt, unsigned long long time, char *file_path) {
+int download_image(char *fmt, unsigned long long time, char *file_path)
+{
 	CURL *curl;
 	FILE *fp;
 	CURLcode res;
@@ -24,26 +25,14 @@ void download_image(char *fmt, unsigned long long time, char *file_path) {
 		curl_easy_cleanup(curl);
 		fclose(fp);
 	}
+	return 0;
 }
 
-void download_radar_image(struct map *map, unsigned long long time, char *file_path)
+int download_radar_image(struct map *map, unsigned long long time, char *file_path)
 {
 	// TODO use position / url data from map
-	download_image("https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C1671846900000&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image", time, file_path);
+	return download_image("https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C1671846900000&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image", time, file_path);
 }
 
 // TODO same as radar but with cloud cover
 //downloadCloudImage
-
-int main(void)
-{
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	unsigned long long millisecondsSinceEpoch =
-		(unsigned long long)(tv.tv_sec) * 1000 +
-		(unsigned long long)(tv.tv_usec) / 1000;
-
-	download_radar_image(NULL, millisecondsSinceEpoch, "test.png");
-
-	return 0;
-}
