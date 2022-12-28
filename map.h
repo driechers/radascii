@@ -27,6 +27,8 @@ struct map
 	// Runtime data
 	int panx; 		// Where to start printing from x
 	int pany; 		// Where to start printing from y
+	int renderw;		// Console width
+	int renderh;		// Console height
 	enum color *radar;	// Radar image in vt100 colors no newlines
 };
 

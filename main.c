@@ -17,6 +17,8 @@ struct args
 	char *test_image;
 	int x;
 	int y;
+	int w;
+	int h;
 };
 
 void usage()
@@ -28,12 +30,13 @@ void usage()
 	   "\t-m <ascii map file>\n"
 	   "\t-x <x coord to pan to>\n"
 	   "\t-y <y coord to pan to>\n"
+	   "\t-r <console rows>\n"
+	   "\t-c <console columns>\n"
            "\t-h Dispaly this menu.\n"
            "\t-a Play radar animation once.\n"
            "\t-l Continuously play radar loop.\n");
 }
 
-// TODO support console size
 void getOptions(struct args *args, int argc, char **argv)
 {
 	int opt;
@@ -41,11 +44,13 @@ void getOptions(struct args *args, int argc, char **argv)
 	// Defaults
 	char *str_x = "0";
 	char *str_y = "0";
+	char *str_c = "80";
+	char *str_r = "24";
 	args->map_file = "usmca.txt";
 	args->test_image = NULL;
 
 	// Process Args
-	while((opt=getopt(argc, argv, "lahm:t:x:y:")) != -1 )  {
+	while((opt=getopt(argc, argv, "lahm:t:x:y:w:h:c:r:")) != -1 )  {
 		switch(opt) {
 			case 'l':
 				args->loop = 1;
@@ -68,6 +73,12 @@ void getOptions(struct args *args, int argc, char **argv)
 			case 'y':
 				str_y = optarg;
 				break;
+			case 'c':
+				str_c = optarg;
+				break;
+			case 'r':
+				str_r = optarg;
+				break;
 			default:
 				usage();
 				exit(-1);
@@ -77,6 +88,8 @@ void getOptions(struct args *args, int argc, char **argv)
 	// Convert args
 	args->x = atoi(str_x);
 	args->y = atoi(str_y);
+	args->w = atoi(str_c);
+	args->h = atoi(str_r);
 }
 
 
@@ -115,6 +128,8 @@ int main(int argc, char **argv)
 
 	map.panx = args.x;
 	map.pany = args.y;
+	map.renderw = args.w;
+	map.renderh = args.h;
 	print_map(&map);
 	free_map(&map);
 

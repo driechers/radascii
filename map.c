@@ -57,8 +57,8 @@ void free_map(struct map *map)
 void print_map(struct map *map)
 {
 	// TODO adjust to console size
-	for (int j=map->pany; j < map->pany + 300 && j < map->h; j++) {
-		for (int i=map->panx; i < map->panx + 140 && i < map->w; i++) {
+	for (int j=map->pany; j < map->pany + map->renderh && j < map->h; j++) {
+		for (int i=map->panx; i < map->panx + map->renderw && i < map->w; i++) {
 			printf("%s%c", color_to_vt100(map->radar[j*map->w +i]), map->data[j*map->w + i]);
 		}
 		putchar('\n');
