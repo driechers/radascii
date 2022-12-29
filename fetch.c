@@ -28,10 +28,11 @@ int download_image(char *fmt, unsigned long long time, char *file_path)
 	return 0;
 }
 
-int download_radar_image(struct map *map, unsigned long long time, char *file_path)
+int download_weather_image(struct map *map, unsigned long long time, char *file_path, int clouds)
 {
-	return download_image(map->radar_url, time, file_path);
-}
+	if(clouds)
+		return download_image(map->cloud_url, time, file_path);
+	else
+		return download_image(map->radar_url, time, file_path);
 
-// TODO same as radar but with cloud cover
-//downloadCloudImage
+}

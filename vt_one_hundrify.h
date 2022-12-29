@@ -10,13 +10,15 @@
 #define KBLU  "\x1B[44m"
 #define KMAG  "\x1B[45m"
 #define KCYN  "\x1B[46m"
-#define KWHT  "\x1B[47m"
+#define KWHT  "\x1B[107m"
+#define KLGRY "\x1B[47m"
+#define KGRY  "\x1B[100m"
 #define KCLFT "\x1B[80C"
 #define KCUP  "\x1B[26A"
 #define KCDN  "\x1B[26B"
 
 void libpng_init (void);
-int vt_one_hundrify(struct map *map, char *filename);
+int vt_one_hundrify(struct map *map, char *filename, int clouds);
 const char* color_to_vt100(enum color color);
 
 #endif

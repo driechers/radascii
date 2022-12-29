@@ -18,6 +18,8 @@ int load_map(struct map *map, char *filename)
 	fscanf(fp, "start pixel y: %d\n", &map->starty);
 	fgets(map->radar_url, 512, fp);
 	map->radar_url[strnlen(map->radar_url, 512)-1] = 0;
+	fgets(map->cloud_url, 512, fp);
+	map->cloud_url[strnlen(map->cloud_url, 512)-1] = 0;
 
 	// Init runtime data
 	map->panx = 0;

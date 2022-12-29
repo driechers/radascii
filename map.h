@@ -10,6 +10,9 @@ enum color
 	magenta,
 	cyan,
 	color_count,
+	grey,
+	light_grey,
+	white,
 	normal
 };
 
@@ -23,6 +26,7 @@ struct map
 	int startx; 		// starting pixel x
 	int starty; 		// starting pixel y
 	char radar_url[512];	// URL to download radar image
+	char cloud_url[512];	// URL to download cloud image
 	char *data; 		// ascii art map no newlines
 	// Runtime data
 	int panx; 		// Where to start printing from x

@@ -96,13 +96,19 @@ const char* color_to_vt100(enum color color)
 			return KMAG;
 		case cyan:
 			return KCYN;
+		case white:
+			return KWHT;
+		case light_grey:
+			return KLGRY;
+		case grey:
+			return KGRY;
 		case normal:
 			return KNRM;
 	}
 	return "";
 }
 
-int vt_one_hundrify(struct map *map, char *filename)
+int vt_one_hundrify_radar(struct map *map, char *filename)
 {
 	int h = map->hpx;
 	int w = map->wpx;
@@ -165,4 +171,64 @@ int vt_one_hundrify(struct map *map, char *filename)
 	}
 	free_image(png);
 	return 0;
+}
+
+int vt_one_hundrify_clouds(struct map *map, char *filename)
+{
+	int h = map->hpx;
+	int w = map->wpx;
+	int mH = map->h;
+	int mW = map->w;
+	struct png_data png = read_png_file(filename);
+
+	if (4 != png_get_channels(png.png, png.info))
+		return -1; // not 4 channels
+	if (map->hpx != png_get_image_height(png.png, png.info))
+		return -2; // not the expected width
+	if (map->wpx != png_get_image_width(png.png, png.info))
+		return -3; // not the expected height
+
+	for(int row=0; row < mH; row++)
+	for(int col=0; col < mW; col++) {
+		int cloud_pixels = 0;
+		int total = 0;
+
+		// startx and starty have limited testing
+		for(int y=row*h/mH + map->starty; y < (row+1)*h/mH + map->starty; y++)
+		for(int x=col*w/mW + map->startx; x < (col+1)*w/mW + map->startx; x++) {
+			png_bytep img_row = png.image[y];
+			png_bytep px = &(img_row[x * 4]);
+			int r= px[0];
+			int b= px[1];
+			int g= px[2];
+			int a= px[3];
+			if(a== 255 && r == b && b == g) {
+				// This should be all pixels
+				if (r > 128)
+					cloud_pixels++;
+			}
+			total++;
+		}
+
+		double cloud_ratio = (double)cloud_pixels / (double)total;
+
+		if(cloud_ratio > 3./4.)
+			map->radar[row*map->w + col] = white;
+		else if(cloud_ratio > 1./2.)
+			map->radar[row*map->w + col] = light_grey;
+		else if(cloud_ratio > 1./4.)
+			map->radar[row*map->w + col] = grey;
+		else
+			map->radar[row*map->w + col] = normal;
+	}
+	free_image(png);
+	return 0;
+}
+
+int vt_one_hundrify(struct map *map, char *filename, int clouds)
+{
+	if(clouds)
+		vt_one_hundrify_clouds(map, filename);
+	else
+		vt_one_hundrify_radar(map, filename);
 }

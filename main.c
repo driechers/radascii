@@ -11,6 +11,7 @@
 //TODO support animation
 struct args
 {
+	int clouds;
 	int loop;
 	int animated;
 	char *map_file;
@@ -32,6 +33,7 @@ void usage()
 		"\t-y <y coord to pan to>\n"
 		"\t-r <console rows>\n"
 		"\t-c <console columns>\n"
+		"\t-s satellite cloud coverage \n"
 		"\t-h Dispaly this menu.\n"
 		"\t-a Play radar animation once.\n"
 		"\t-l Continuously play radar loop.\n");
@@ -48,10 +50,14 @@ void getOptions(struct args *args, int argc, char **argv)
 	char *str_r = "24";
 	args->map_file = "usmca.txt";
 	args->test_image = NULL;
+	args->clouds = 0;
 
 	// Process Args
-	while((opt=getopt(argc, argv, "lahm:t:x:y:w:h:c:r:")) != -1 )  {
+	while((opt=getopt(argc, argv, "slahm:t:x:y:w:h:c:r:")) != -1 )  {
 		switch(opt) {
+			case 's':
+				args->clouds = 1;
+				break;
 			case 'l':
 				args->loop = 1;
 				break;
@@ -107,7 +113,7 @@ int main(int argc, char **argv)
 	r = load_map(&map, args.map_file);
 
 	if(args.test_image)
-		r = vt_one_hundrify(&map, args.test_image);
+		r = vt_one_hundrify(&map, args.test_image, args.clouds);
 	else {
 		// Create dir for frames
     		mkdtemp(img_dir);
@@ -119,8 +125,8 @@ int main(int argc, char **argv)
 		unsigned long long now =
 			(unsigned long long)(tv.tv_sec) * 1000 +
 			(unsigned long long)(tv.tv_usec) / 1000;
-		r = download_radar_image(&map, now, img_path);
-		r = vt_one_hundrify(&map, img_path);
+		r = download_weather_image(&map, now, img_path, args.clouds);
+		r = vt_one_hundrify(&map, img_path, args.clouds);
     		remove(img_path);
 
     		remove(img_dir);
