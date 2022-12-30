@@ -7,6 +7,24 @@
 #include "fetch.h"
 #include "vt_one_hundrify.h"
 
+void key(void)
+{
+	printf(
+		"0    10   20   30   40   50   60   70   80   DBZ\n"
+		"   " KBLU "     " KCYN "    " KGRN "       " KYEL "      " KRED "     " KMAG "                  " KNRM "\n\n\n"
+		"0 .1     2.5    25          150  200    300   (strikes/km^2)/min x 10^3\n"
+		KNRM "   " KYEL "      " KRED "       " KMAG "            " KBLU "     " KCYN "       " KGRN "        " KNRM "\n"
+		"0 .2     7      60          370  500    777   (strikes/mi^2)/min x 10^3\n\n\n"
+
+#define KWHT  "\x1B[30m\x1B[107m"
+#define KLGRY "\x1B[30m\x1B[47m"
+#define KGRY  "\x1B[30m\x1B[100m"
+		"No Clouds    Partly Cloudy    Mostly Cloudy    Overcast\n"
+		"             " KGRY "                 " KLGRY "                 " KWHT "        " KNRM "\n"
+	      );
+}
+
+
 //TODO support looping
 //TODO support animation
 struct args
@@ -36,6 +54,7 @@ void usage()
 		"\t-s satellite cloud coverage \n"
 		"\t-l lightning map.\n"
 		"\t-h Dispaly this menu.\n"
+		"\t-k Dispaly the map key.\n"
 		"\t-a Play radar animation once.\n"
 	      );
 }
@@ -57,7 +76,7 @@ void getOptions(struct args *args, int argc, char **argv)
 
 	// Process Args
 	// TODO long options
-	while((opt=getopt(argc, argv, "slahm:t:x:y:w:h:c:r:")) != -1 )  {
+	while((opt=getopt(argc, argv, "slahkm:t:x:y:w:h:c:r:")) != -1 )  {
 		switch(opt) {
 			case 's':
 				args->image_type = clouds;
@@ -89,6 +108,10 @@ void getOptions(struct args *args, int argc, char **argv)
 			case 'r':
 				str_r = optarg;
 				break;
+			case 'k':
+				key();
+				exit(0);
+				break;
 			default:
 				usage();
 				exit(-1);
@@ -101,7 +124,6 @@ void getOptions(struct args *args, int argc, char **argv)
 	args->w = atoi(str_c);
 	args->h = atoi(str_r);
 }
-
 
 // TODO top level error checking
 int main(int argc, char **argv)
