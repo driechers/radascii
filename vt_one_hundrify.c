@@ -225,13 +225,24 @@ int vt_one_hundrify_clouds(struct map *map, char *filename)
 	return 0;
 }
 
-// TODO lightning strikes
-// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/sat_meteo_emulated_imagery_lightningstrikedensity_goes_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%3A3&time=1672351200000%2C1672351200000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
-
+// TODO gridded forcast
+// surface temp
+// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A31&time=1672437600000%2C1672437600000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
+// apparent looks like simply a layers=show difference
+// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A39&time=1672437600000%2C1672437600000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
+// Min Max
 // TODO short term hazards
+//https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteoceanhydro_shortduration_hazards_watches_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A0%2C1%2C2&time=1672437060000%2C1672437060000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
 // TODO long term hazards
+// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteoceanhydro_longduration_hazards_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%3A1%2C4%2C8%2C11%2C15%2C18%2C22%2C25%2C28%2C34%2C31%2C37%2C40&time=1672437960000%2C1672437960000&bbox=-15290014.707599312%2C1820655.5130154742%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C593&f=image
 // TODO fire weather
-// TODO legends
+//
+// TODO generate county map from https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_pts_zones_geolinks/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A9&bbox=-15290014.707599312%2C1820655.5130154742%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C593&f=image
+// TODO surface visibility https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A27&time=1672434000000%2C1672434000000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
+//
+// TODO possibly change satelite image to skycover since that is analyzed and could allow for simple desampling
+// Next TODO move urls out of the map into fetch.c and select by image type
+// Next TODO generic fetch interface and nowcoast fetch
 
 int vt_one_hundrify(struct map *map, char *filename)
 {
