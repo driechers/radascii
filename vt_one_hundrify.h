@@ -18,7 +18,7 @@
 #define KCDN  "\x1B[26B"
 
 void libpng_init (void);
-int vt_one_hundrify(struct map *map, char *filename, int clouds);
+int vt_one_hundrify(struct map *map, char *filename);
 const char* color_to_vt100(enum color color);
 
 #endif

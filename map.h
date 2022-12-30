@@ -1,6 +1,13 @@
 #ifndef MAP_H
 #define MAP_H
 
+enum image_type
+{
+	radar,
+	clouds,
+	lightning
+};
+
 enum color
 {
 	red,
@@ -27,6 +34,7 @@ struct map
 	int starty; 		// starting pixel y
 	char radar_url[512];	// URL to download radar image
 	char cloud_url[512];	// URL to download cloud image
+	char lightning_url[512];// URL to download lightning image
 	char *data; 		// ascii art map no newlines
 	// Runtime data
 	int panx; 		// Where to start printing from x
@@ -34,6 +42,7 @@ struct map
 	int renderw;		// Console width
 	int renderh;		// Console height
 	enum color *radar;	// Radar image in vt100 colors no newlines
+	enum image_type image_type;
 };
 
 int load_map(struct map *map, char *filename);

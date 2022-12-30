@@ -9,6 +9,9 @@ Radascii supports radar images over the continental US, most of Canada and most 
 Radascii also support satelite cloud cover images over the continental US, most of Canada and most of Mexico
 ![alt text](satelite.png?raw=true "radascii")
 
+Radascii also support lightning images over the continental US, most of Canada and most of Mexico
+![alt text](lightning.png?raw=true "radascii")
+
 ## Buidling / Running
 Currently the application is limited to running in the same directory as the ascii art file DVN.txt and only the quad cities radar site is supported.
 

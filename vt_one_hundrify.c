@@ -225,9 +225,17 @@ int vt_one_hundrify_clouds(struct map *map, char *filename)
 	return 0;
 }
 
-int vt_one_hundrify(struct map *map, char *filename, int clouds)
+// TODO lightning strikes
+// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/sat_meteo_emulated_imagery_lightningstrikedensity_goes_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%3A3&time=1672351200000%2C1672351200000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
+
+// TODO short term hazards
+// TODO long term hazards
+// TODO fire weather
+// TODO legends
+
+int vt_one_hundrify(struct map *map, char *filename)
 {
-	if(clouds)
+	if(map->image_type == clouds)
 		vt_one_hundrify_clouds(map, filename);
 	else
 		vt_one_hundrify_radar(map, filename);

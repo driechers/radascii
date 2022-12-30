@@ -28,10 +28,12 @@ int download_image(char *fmt, unsigned long long time, char *file_path)
 	return 0;
 }
 
-int download_weather_image(struct map *map, unsigned long long time, char *file_path, int clouds)
+int download_weather_image(struct map *map, unsigned long long time, char *file_path)
 {
-	if(clouds)
+	if(map->image_type == clouds)
 		return download_image(map->cloud_url, time, file_path);
+	else if(map->image_type == lightning)
+		return download_image(map->lightning_url, time, file_path);
 	else
 		return download_image(map->radar_url, time, file_path);
 

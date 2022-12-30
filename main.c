@@ -11,7 +11,7 @@
 //TODO support animation
 struct args
 {
-	int clouds;
+	enum image_type image_type;
 	int loop;
 	int animated;
 	char *map_file;
@@ -34,9 +34,10 @@ void usage()
 		"\t-r <console rows>\n"
 		"\t-c <console columns>\n"
 		"\t-s satellite cloud coverage \n"
+		"\t-l lightning map.\n"
 		"\t-h Dispaly this menu.\n"
 		"\t-a Play radar animation once.\n"
-		"\t-l Continuously play radar loop.\n");
+	      );
 }
 
 void getOptions(struct args *args, int argc, char **argv)
@@ -48,18 +49,21 @@ void getOptions(struct args *args, int argc, char **argv)
 	char *str_y = "0";
 	char *str_c = "80";
 	char *str_r = "24";
+	args->animated = 0;
+	args->loop = 0;
 	args->map_file = "usmca.txt";
 	args->test_image = NULL;
-	args->clouds = 0;
+	args->image_type = radar;
 
 	// Process Args
+	// TODO long options
 	while((opt=getopt(argc, argv, "slahm:t:x:y:w:h:c:r:")) != -1 )  {
 		switch(opt) {
 			case 's':
-				args->clouds = 1;
+				args->image_type = clouds;
 				break;
 			case 'l':
-				args->loop = 1;
+				args->image_type = lightning;
 				break;
 			case 'a':
 				args->animated = 1;
@@ -111,9 +115,10 @@ int main(int argc, char **argv)
 	getOptions(&args, argc, argv);
 
 	r = load_map(&map, args.map_file);
+	map.image_type = args.image_type;
 
 	if(args.test_image)
-		r = vt_one_hundrify(&map, args.test_image, args.clouds);
+		r = vt_one_hundrify(&map, args.test_image);
 	else {
 		// Create dir for frames
     		mkdtemp(img_dir);
@@ -125,8 +130,8 @@ int main(int argc, char **argv)
 		unsigned long long now =
 			(unsigned long long)(tv.tv_sec) * 1000 +
 			(unsigned long long)(tv.tv_usec) / 1000;
-		r = download_weather_image(&map, now, img_path, args.clouds);
-		r = vt_one_hundrify(&map, img_path, args.clouds);
+		r = download_weather_image(&map, now, img_path);
+		r = vt_one_hundrify(&map, img_path);
     		remove(img_path);
 
     		remove(img_dir);

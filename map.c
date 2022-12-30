@@ -20,6 +20,8 @@ int load_map(struct map *map, char *filename)
 	map->radar_url[strnlen(map->radar_url, 512)-1] = 0;
 	fgets(map->cloud_url, 512, fp);
 	map->cloud_url[strnlen(map->cloud_url, 512)-1] = 0;
+	fgets(map->lightning_url, 512, fp);
+	map->lightning_url[strnlen(map->lightning_url, 512)-1] = 0;
 
 	// Init runtime data
 	map->panx = 0;
@@ -62,7 +64,7 @@ void print_map(struct map *map)
 		for (int i=map->panx; i < map->panx + map->renderw && i < map->w; i++) {
 			printf("%s%c", color_to_vt100(map->radar[j*map->w +i]), map->data[j*map->w + i]);
 		}
-		putchar('\n');
+		printf("%s\n", KNRM);
 	}
 }
 
