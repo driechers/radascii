@@ -172,8 +172,9 @@ int main(int argc, char **argv)
 	r = load_map(&map, args.map_file);
 	map.image_type = args.image_type;
 
-	if(args.test_image)
+	if(args.test_image) {
 		r = vt_one_hundrify(&map, args.test_image);
+	}
 	else {
 		// Create dir for frames
     		mkdtemp(img_dir);

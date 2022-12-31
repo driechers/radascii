@@ -227,7 +227,6 @@ int vt_one_hundrify_clouds(struct map *map, char *filename)
 
 // TODO gridded forcast
 // surface temp
-// https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A31&time=1672437600000%2C1672437600000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
 // apparent looks like simply a layers=show difference
 // https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A39&time=1672437600000%2C1672437600000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
 // Min Max
