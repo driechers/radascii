@@ -5,7 +5,15 @@ enum image_type
 {
 	radar,
 	clouds,
-	lightning
+	lightning,
+	surface_temp,
+	apparent_temp,
+	high_temp,
+	low_temp,
+	short_hazards,
+	long_hazards,
+	fire_weather,
+	surface_visibility
 };
 
 enum color
@@ -32,9 +40,6 @@ struct map
 	int hpx;	 	// Height in pixels
 	int startx; 		// starting pixel x
 	int starty; 		// starting pixel y
-	char radar_url[512];	// URL to download radar image
-	char cloud_url[512];	// URL to download cloud image
-	char lightning_url[512];// URL to download lightning image
 	char *data; 		// ascii art map no newlines
 	// Runtime data
 	int panx; 		// Where to start printing from x

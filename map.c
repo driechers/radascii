@@ -8,20 +8,17 @@
 int load_map(struct map *map, char *filename)
 {
 	int h;
+	char seperator[32];
 	// TODO error check
 	FILE *fp = fopen(filename, "r");
+	fgets(seperator, 32, fp);
 	fscanf(fp, "width: %d\n", &map->w);
 	fscanf(fp, "height: %d\n", &map->h);
 	fscanf(fp, "image width: %d\n", &map->wpx);
 	fscanf(fp, "image height: %d\n", &map->hpx);
 	fscanf(fp, "start pixel x: %d\n", &map->startx);
 	fscanf(fp, "start pixel y: %d\n", &map->starty);
-	fgets(map->radar_url, 512, fp);
-	map->radar_url[strnlen(map->radar_url, 512)-1] = 0;
-	fgets(map->cloud_url, 512, fp);
-	map->cloud_url[strnlen(map->cloud_url, 512)-1] = 0;
-	fgets(map->lightning_url, 512, fp);
-	map->lightning_url[strnlen(map->lightning_url, 512)-1] = 0;
+	fgets(seperator, 32, fp);
 
 	// Init runtime data
 	map->panx = 0;
