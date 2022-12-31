@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -6,6 +7,28 @@
 #include "map.h"
 #include "fetch.h"
 #include "vt_one_hundrify.h"
+
+static const char * image_types[] = {
+	[radar] = "radar",
+	[clouds] = "clouds",
+	[lightning] = "lightning",
+	[surface_temp] = "surface_temp",
+	[apparent_temp] = "apparent_temp",
+	[high_temp] = "high_temp",
+	[low_temp] = "low_temp",
+	[short_hazards] = "short_hazards",
+	[long_hazards] = "long_hazards",
+	[fire_weather] = "fire",
+	[surface_visibility] = "visibility"
+};
+
+void show_image_types(void)
+{
+	printf("image types:\n");
+	for(int i=0; i < num_image_types; i++) {
+		printf("\t%s\n", image_types[i]);
+	}
+}
 
 void key(void)
 {
@@ -51,8 +74,8 @@ void usage()
 		"\t-y <y coord to pan to>\n"
 		"\t-r <console rows>\n"
 		"\t-c <console columns>\n"
-		"\t-s satellite cloud coverage \n"
-		"\t-l lightning map.\n"
+		"\t-l list image types.\n"
+		"\t-i <image type>\n"
 		"\t-h Dispaly this menu.\n"
 		"\t-k Dispaly the map key.\n"
 		"\t-a Play radar animation once.\n"
@@ -64,6 +87,7 @@ void getOptions(struct args *args, int argc, char **argv)
 	int opt;
 
 	// Defaults
+	char *str_image_type = "radar";
 	char *str_x = "0";
 	char *str_y = "0";
 	char *str_c = "80";
@@ -72,18 +96,11 @@ void getOptions(struct args *args, int argc, char **argv)
 	args->loop = 0;
 	args->map_file = "usmca.txt";
 	args->test_image = NULL;
-	args->image_type = radar;
 
 	// Process Args
 	// TODO long options
-	while((opt=getopt(argc, argv, "slahkm:t:x:y:w:h:c:r:")) != -1 )  {
+	while((opt=getopt(argc, argv, "lahkm:t:x:y:w:h:c:r:i:")) != -1 )  {
 		switch(opt) {
-			case 's':
-				args->image_type = clouds;
-				break;
-			case 'l':
-				args->image_type = lightning;
-				break;
 			case 'a':
 				args->animated = 1;
 				break;
@@ -108,10 +125,15 @@ void getOptions(struct args *args, int argc, char **argv)
 			case 'r':
 				str_r = optarg;
 				break;
+			case 'i':
+				str_image_type = optarg;
+				break;
 			case 'k':
 				key();
 				exit(0);
-				break;
+			case 'l':
+				show_image_types();
+				exit(0);
 			default:
 				usage();
 				exit(-1);
@@ -123,6 +145,17 @@ void getOptions(struct args *args, int argc, char **argv)
 	args->y = atoi(str_y);
 	args->w = atoi(str_c);
 	args->h = atoi(str_r);
+
+	for(args->image_type = radar; args->image_type < num_image_types; args->image_type++) {
+		if(0 == strcmp(image_types[args->image_type], str_image_type))
+			break;
+	}
+
+	if(args->image_type == num_image_types) {
+		printf("image type does not exist\n\n");
+		show_image_types();
+		exit(-1);
+	}
 }
 
 // TODO top level error checking

@@ -13,7 +13,8 @@ enum image_type
 	short_hazards,
 	long_hazards,
 	fire_weather,
-	surface_visibility
+	surface_visibility,
+	num_image_types
 };
 
 enum color
