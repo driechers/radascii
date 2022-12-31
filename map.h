@@ -14,6 +14,7 @@ enum image_type
 	long_hazards,
 	fire_weather,
 	surface_visibility,
+	snow_fall,
 	num_image_types
 };
 

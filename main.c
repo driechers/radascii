@@ -19,7 +19,8 @@ static const char * image_types[] = {
 	[short_hazards] = "short_hazards",
 	[long_hazards] = "long_hazards",
 	[fire_weather] = "fire",
-	[surface_visibility] = "visibility"
+	[surface_visibility] = "visibility",
+	[snow_fall] = "6hr_snow_fall"
 };
 
 void show_image_types(void)
