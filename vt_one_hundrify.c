@@ -230,8 +230,6 @@ int vt_one_hundrify_clouds(struct map *map, char *filename)
 // TODO fire weather
 //
 // TODO generate county map from https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_pts_zones_geolinks/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A9&bbox=-15290014.707599312%2C1820655.5130154742%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C593&f=image
-// TODO surface visibility https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A27&time=1672434000000%2C1672434000000&bbox=-15290014.707599312%2C2603370.6826554714%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C513&f=image
-//
 // TODO possibly change satelite image to skycover since that is analyzed and could allow for simple desampling
 
 int vt_one_hundrify(struct map *map, char *filename)
