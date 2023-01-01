@@ -19,6 +19,7 @@ enum image_type
 	algae,
 	relative_humidity,
 	wind_speed,
+	wind_gust,
 	num_image_types
 };
 
