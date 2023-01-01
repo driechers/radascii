@@ -30,10 +30,10 @@ enum color
 	blue,
 	magenta,
 	cyan,
-	color_count,
 	grey,
 	light_grey,
 	white,
+	color_count,
 	normal
 };
 

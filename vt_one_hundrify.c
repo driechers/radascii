@@ -80,6 +80,22 @@ static int hue_is_vt100_cyan(double h)
 	return hue_is_cyan(h);
 }
 
+// TODO it would be cool if the code was smart enough to pick out values in the image/key instead of hard coding range
+static int shade_is_vt100_grey(int s)
+{
+	return s > 64 && s < 128;
+}
+
+static int shade_is_vt100_light_grey(int s)
+{
+	return s > 128 && s < 192;
+}
+
+static int shade_is_vt100_white(int s)
+{
+	return s > 192;
+}
+
 const char* color_to_vt100(enum color color)
 {
 	switch(color)
@@ -108,8 +124,7 @@ const char* color_to_vt100(enum color color)
 	return "";
 }
 
-//TODO support grey and white rename radar to generic or something
-int vt_one_hundrify_radar(struct map *map, char *filename)
+int vt_one_hundrify_generic(struct map *map, char *filename)
 {
 	int h = map->hpx;
 	int w = map->wpx;
@@ -139,20 +154,30 @@ int vt_one_hundrify_radar(struct map *map, char *filename)
 			int g= px[2];
 			int a= px[3];
 			if(a== 255) {
-				double h = rgb_to_hsv(r, b, g).H;
+				if(r == b && b == g) {
+					if (shade_is_vt100_white(r))
+						count[white]++;
+					if (shade_is_vt100_light_grey(r))
+						count[light_grey]++;
+					if (shade_is_vt100_grey(r))
+						count[grey]++;
+				}
+				else {
+					double h = rgb_to_hsv(r, b, g).H;
 
-				if (hue_is_vt100_red(h))
-					count[red]++;
-				else if (hue_is_vt100_green(h))
-					count[green]++;
-				else if (hue_is_vt100_yellow(h))
-					count[yellow]++;
-				else if (hue_is_vt100_blue(h))
-					count[blue]++;
-				else if (hue_is_vt100_magenta(h))
-					count[magenta]++;
-				else if (hue_is_vt100_cyan(h))
-					count[cyan]++;
+					if (hue_is_vt100_red(h))
+						count[red]++;
+					else if (hue_is_vt100_green(h))
+						count[green]++;
+					else if (hue_is_vt100_yellow(h))
+						count[yellow]++;
+					else if (hue_is_vt100_blue(h))
+						count[blue]++;
+					else if (hue_is_vt100_magenta(h))
+						count[magenta]++;
+					else if (hue_is_vt100_cyan(h))
+						count[cyan]++;
+				}
 			}
 		}
 
@@ -236,5 +261,5 @@ int vt_one_hundrify(struct map *map, char *filename)
 	if(map->image_type == clouds)
 		vt_one_hundrify_clouds(map, filename);
 	else
-		vt_one_hundrify_radar(map, filename);
+		vt_one_hundrify_generic(map, filename);
 }
