@@ -17,6 +17,7 @@ enum image_type
 	snow_fall,
 	dew_point,
 	algae,
+	relative_humidity,
 	num_image_types
 };
 
