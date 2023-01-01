@@ -20,6 +20,7 @@ enum image_type
 	relative_humidity,
 	wind_speed,
 	wind_gust,
+	wave,
 	num_image_types
 };
 

@@ -25,7 +25,8 @@ static const char * image_types[] = {
 	[algae] = "harmful_algae_bloom",
 	[relative_humidity] = "relative_humidity",
 	[wind_speed] = "wind_speed",
-	[wind_gust] = "wind_gust"
+	[wind_gust] = "wind_gust",
+	[wave] = "wave"
 };
 
 void show_image_types(void)
