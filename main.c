@@ -23,7 +23,8 @@ static const char * image_types[] = {
 	[snow_fall] = "6hr_snow_fall",
 	[dew_point] = "dew_point",
 	[algae] = "harmful_algae_bloom",
-	[relative_humidity] = "relative_humidity"
+	[relative_humidity] = "relative_humidity",
+	[wind_speed] = "wind_speed"
 };
 
 void show_image_types(void)

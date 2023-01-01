@@ -18,6 +18,7 @@ enum image_type
 	dew_point,
 	algae,
 	relative_humidity,
+	wind_speed,
 	num_image_types
 };
 
