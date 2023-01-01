@@ -16,6 +16,7 @@
 #define KCLFT "\x1B[80C"
 #define KCUP  "\x1B[26A"
 #define KCDN  "\x1B[26B"
+#define KCHM  "\x1B[H"
 
 void libpng_init (void);
 int vt_one_hundrify(struct map *map, char *filename);

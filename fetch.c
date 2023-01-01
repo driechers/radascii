@@ -39,7 +39,6 @@ int download_image(const char *fmt, unsigned long long time, char *file_path)
 	char fileName[11];
 
 	snprintf(url, 512, fmt, time, time);
-	printf("%s\n", url);
 
 	curl = curl_easy_init();
 	if (curl) {

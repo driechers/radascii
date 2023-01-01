@@ -55,6 +55,6 @@ struct map
 
 int load_map(struct map *map, char *filename);
 void free_map(struct map *map);
-void print_map(struct map *map);
+void print_map(struct map *map, int reset);
 
 #endif

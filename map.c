@@ -54,14 +54,17 @@ void free_map(struct map *map)
 	free(map->radar);
 }
 
-void print_map(struct map *map)
+void print_map(struct map *map, int reset)
 {
+	if (reset) {
+		printf("\r%s", KCHM);
+	}
 	// TODO adjust to console size
 	for (int j=map->pany; j < map->pany + map->renderh && j < map->h; j++) {
 		for (int i=map->panx; i < map->panx + map->renderw && i < map->w; i++) {
 			printf("%s%c", color_to_vt100(map->radar[j*map->w +i]), map->data[j*map->w + i]);
 		}
-		printf("%s\n", KNRM);
+		printf("%s\r\n", KNRM);
 	}
 }
 

@@ -63,6 +63,7 @@ struct args
 	int y;
 	int w;
 	int h;
+	int interactive;
 };
 
 void usage()
@@ -81,6 +82,7 @@ void usage()
 		"\t-h Dispaly this menu.\n"
 		"\t-k Dispaly the map key.\n"
 		"\t-a Play radar animation once.\n"
+		"\t-I Interactive mode arrows to move map and q to quit.\n"
 	      );
 }
 
@@ -95,16 +97,20 @@ void getOptions(struct args *args, int argc, char **argv)
 	char *str_c = "80";
 	char *str_r = "24";
 	args->animated = 0;
+	args->interactive = 0;
 	args->loop = 0;
 	args->map_file = "usmca.txt";
 	args->test_image = NULL;
 
 	// Process Args
 	// TODO long options
-	while((opt=getopt(argc, argv, "lahkm:t:x:y:w:h:c:r:i:")) != -1 )  {
+	while((opt=getopt(argc, argv, "lahkIm:t:x:y:w:h:c:r:i:")) != -1 )  {
 		switch(opt) {
 			case 'a':
 				args->animated = 1;
+				break;
+			case 'I':
+				args->interactive = 1;
 				break;
 			case 'h':
 				usage();
@@ -199,7 +205,37 @@ int main(int argc, char **argv)
 	map.pany = args.y;
 	map.renderw = args.w;
 	map.renderh = args.h;
-	print_map(&map);
+
+	if(args.interactive) {
+		system("stty raw -echo");
+		int key = 0;
+		while (key != 'q') { // TODO also esc
+			key = getchar();
+			switch(key) {
+				case 'k': // TODO also up arrow
+					if (map.pany > 0)
+						map.pany--;
+					break;
+				case 'j': // TODO also down arrow
+					if (map.pany + map.renderh < map.h)
+						map.pany++;
+					break;
+				case 'h': // TODO also left arrow
+					if (map.panx > 0)
+						map.panx--;
+					break;
+				case 'l': // TODO also right arrow
+					if (map.panx + map.renderw < map.w)
+						map.panx++;
+					break;
+			}
+			print_map(&map, 1);
+		}
+		system("stty cooked echo");
+	}
+	else
+		print_map(&map, 0);
+
 	free_map(&map);
 
 	return 0;
