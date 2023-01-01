@@ -15,6 +15,7 @@ enum image_type
 	fire_weather,
 	surface_visibility,
 	snow_fall,
+	dew_point,
 	num_image_types
 };
 

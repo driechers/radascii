@@ -108,6 +108,7 @@ const char* color_to_vt100(enum color color)
 	return "";
 }
 
+//TODO support grey and white rename radar to generic or something
 int vt_one_hundrify_radar(struct map *map, char *filename)
 {
 	int h = map->hpx;
@@ -225,8 +226,6 @@ int vt_one_hundrify_clouds(struct map *map, char *filename)
 	return 0;
 }
 
-// TODO gridded forcast
-// Min Max
 // TODO fire weather
 //
 // TODO generate county map from https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_pts_zones_geolinks/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A9&bbox=-15290014.707599312%2C1820655.5130154742%2C-6083327.524708849%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%2C593&f=image
