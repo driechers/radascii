@@ -16,6 +16,7 @@ enum image_type
 	surface_visibility,
 	snow_fall,
 	dew_point,
+	algae,
 	num_image_types
 };
 

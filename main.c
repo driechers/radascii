@@ -21,7 +21,8 @@ static const char * image_types[] = {
 	[fire_weather] = "fire",
 	[surface_visibility] = "visibility",
 	[snow_fall] = "6hr_snow_fall",
-	[dew_point] = "dew_point"
+	[dew_point] = "dew_point",
+	[algae] = "harmful_algae_bloom"
 };
 
 void show_image_types(void)
