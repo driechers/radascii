@@ -10,6 +10,8 @@
 static png_structp pngptr = NULL;
 static png_infop pnginfo = NULL;
 
+// TODO support full color range if terminal supports it
+
 static int hue_is_red(double h)
 {
 	return (h <= 360 && h > 350 || h <= 18 && h >= 0);

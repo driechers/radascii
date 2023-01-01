@@ -26,7 +26,8 @@ static const char * image_types[] = {
 	[relative_humidity] = "relative_humidity",
 	[wind_speed] = "wind_speed",
 	[wind_gust] = "wind_gust",
-	[wave] = "wave"
+	[wave] = "wave",
+	[precipitation_prob] = "12_hr_precipitation_probability"
 };
 
 void show_image_types(void)

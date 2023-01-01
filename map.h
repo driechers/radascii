@@ -21,6 +21,7 @@ enum image_type
 	wind_speed,
 	wind_gust,
 	wave,
+	precipitation_prob,
 	num_image_types
 };
 

@@ -3,11 +3,9 @@
 #include "map.h"
 #include "fetch.h"
 
-// Gridded 
-// TODO significant wave height
-// TODO 12 hr probability of preciptiation
 // Analysis
 // TODO precipitation url but allow selection of time passed
+// TODO generate more of the ural from map ie image size, bbox
 static const char * image_type_urls[] = {
 	[radar] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
 	[clouds] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/sat_meteo_imagery_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A11%%2C23&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
@@ -25,7 +23,8 @@ static const char * image_type_urls[] = {
 	[relative_humidity] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A43&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
 	[wind_speed] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A47&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
 	[wind_gust] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A51&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
-	[wave] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A55&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image"
+	[wave] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A55&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
+	[precipitation_prob] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A23&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image"
 };
 
 // TODO error checking
