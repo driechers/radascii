@@ -3,14 +3,28 @@ ASCII Art Weather Radar
 
 Radascii takes images nowcoast, and turns them into a vt100 color map to overlay over ascii art.
 
-Radascii supports radar images over the continental US, most of Canada and most of Mexico
+Radascii supports images over the continental US.
+
+Radascii supports the following image types: radar, clouds, lightning, surface temp, apparent temp, high temp, low temp, short hazards, long hazards, fire, visibility, 6hr snow fall, dew point, harmful algae bloom, relative humidity, wind speed, wind gust, wave, 12hr precipitation probability, 1 3 6 12 24 48 and 72 hr precipitation accumulation.
+
+## Samples
+
+### Radar
+
 ![alt text](radar.png?raw=true "radascii")
 
-Radascii also support satelite cloud cover images over the continental US, most of Canada and most of Mexico
+### Cloud Coverage
+
 ![alt text](satelite.png?raw=true "radascii")
 
-Radascii also support lightning images over the continental US, most of Canada and most of Mexico
+### Lightning
 ![alt text](lightning.png?raw=true "radascii")
+
+### Lightning
+![alt text](lightning.png?raw=true "radascii")
+
+### Fire Outlook
+![alt text](fire.png?raw=true "radascii")
 
 ## Buidling / Running
 Currently the application is limited to running in the same directory as the ascii art file DVN.txt and only the quad cities radar site is supported.
