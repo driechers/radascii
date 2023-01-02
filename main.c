@@ -197,12 +197,13 @@ int main(int argc, char **argv)
 	r = load_map(&map, args.map_file);
 	map.image_type = args.image_type;
 
+	// Create dir for frames
+	mkdtemp(img_dir);
+
 	if(args.test_image) {
 		r = vt_one_hundrify(&map, args.test_image);
 	}
 	else {
-		// Create dir for frames
-    		mkdtemp(img_dir);
 		// This will probably change with animation
 		sprintf(img_path, "%s/0.png", img_dir);
 
@@ -213,10 +214,7 @@ int main(int argc, char **argv)
 			(unsigned long long)(tv.tv_usec) / 1000;
 		r = download_weather_image(&map, now, img_path);
 		r = vt_one_hundrify(&map, img_path);
-		printf("%d\n", r);
     		remove(img_path);
-
-    		remove(img_dir);
 	}
 
 	map.panx = args.x;
@@ -229,6 +227,9 @@ int main(int argc, char **argv)
 		printf(KCHD);
 		int key = 0;
 		while (key != 'q') { // TODO also esc
+			print_map(&map, 1);
+			printf("q=quit  r=refresh space=next image  h=left  j=down  k=up  l=right  %s            ", image_types[map.image_type] );
+
 			key = getchar();
 			switch(key) {
 				case 'k': // TODO also up arrow
@@ -247,9 +248,22 @@ int main(int argc, char **argv)
 					if (map.panx + map.renderw < map.w)
 						map.panx++;
 					break;
+				case ' ':
+					map.image_type = map.image_type == num_image_types-1 ? 0: map.image_type + 1;
+				case 'r':
+					// This should probably be cleaner
+					sprintf(img_path, "%s/0.png", img_dir);
+
+					struct timeval tv;
+					gettimeofday(&tv, NULL);
+					unsigned long long now =
+						(unsigned long long)(tv.tv_sec) * 1000 +
+						(unsigned long long)(tv.tv_usec) / 1000;
+					r = download_weather_image(&map, now, img_path);
+					r = vt_one_hundrify(&map, img_path);
+    					remove(img_path);
+					break;
 			}
-			print_map(&map, 1);
-			printf("q = quit    r = refresh    h = left    j = down    k = up    l = right");
 		}
 		system("stty cooked echo");
 		printf("\n"KCSW);
@@ -257,6 +271,7 @@ int main(int argc, char **argv)
 	else
 		print_map(&map, 0);
 
+	remove(img_dir);
 	free_map(&map);
 
 	return 0;

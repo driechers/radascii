@@ -12,7 +12,7 @@ enum image_type
 	low_temp,
 	short_hazards,
 	long_hazards,
-	fire_weather,
+	fire_weather, // TODO remove
 	surface_visibility,
 	snow_fall,
 	dew_point,
