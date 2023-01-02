@@ -20,9 +20,6 @@ Radascii supports the following image types: radar, clouds, lightning, surface t
 ### Lightning
 ![alt text](lightning.png?raw=true "radascii")
 
-### Lightning
-![alt text](lightning.png?raw=true "radascii")
-
 ### Fire Outlook
 ![alt text](fire.png?raw=true "radascii")
 
