@@ -27,7 +27,18 @@ static const char * image_types[] = {
 	[wind_speed] = "wind_speed",
 	[wind_gust] = "wind_gust",
 	[wave] = "wave",
-	[precipitation_prob] = "12_hr_precipitation_probability"
+	[precipitation_prob] = "12hr_precipitation_probability",
+	[one_hr_accumulation] = "1hr_accumulation",
+	[three_hr_accumulation] = "3hr_accumulation",
+	[six_hr_accumulation] = "6hr_accumulation",
+	[twelve_hr_accumulation] = "12hr_accumulation",
+	[twentyfour_hr_accumulation] = "24hr_accumulation",
+	[fortyeight_hr_accumulation] = "48hr_accumulation",
+	[seventytwo_hr_accumulation] = "72hr_accumulation"
+
+
+
+
 };
 
 void show_image_types(void)
@@ -202,6 +213,7 @@ int main(int argc, char **argv)
 			(unsigned long long)(tv.tv_usec) / 1000;
 		r = download_weather_image(&map, now, img_path);
 		r = vt_one_hundrify(&map, img_path);
+		printf("%d\n", r);
     		remove(img_path);
 
     		remove(img_dir);
@@ -214,6 +226,7 @@ int main(int argc, char **argv)
 
 	if(args.interactive) {
 		system("stty raw -echo");
+		printf(KCHD);
 		int key = 0;
 		while (key != 'q') { // TODO also esc
 			key = getchar();
@@ -236,8 +249,10 @@ int main(int argc, char **argv)
 					break;
 			}
 			print_map(&map, 1);
+			printf("q = quit    r = refresh    h = left    j = down    k = up    l = right");
 		}
 		system("stty cooked echo");
+		printf("\n"KCSW);
 	}
 	else
 		print_map(&map, 0);

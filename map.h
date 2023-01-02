@@ -22,6 +22,13 @@ enum image_type
 	wind_gust,
 	wave,
 	precipitation_prob,
+	one_hr_accumulation,
+	three_hr_accumulation,
+	six_hr_accumulation,
+	twelve_hr_accumulation,
+	twentyfour_hr_accumulation,
+	fortyeight_hr_accumulation,
+	seventytwo_hr_accumulation,
 	num_image_types
 };
 
