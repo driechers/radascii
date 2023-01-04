@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <sys/time.h>
 
 #include "map.h"
@@ -183,96 +184,164 @@ void getOptions(struct args *args, int argc, char **argv)
 	}
 }
 
+static struct map map[10];
+static int num_frames= 1;
+static int done = 0;
+
+void* display_frames(void *thread_args)
+{
+	int panx = map[0].panx;
+	int pany = map[0].pany;
+	while(!done) {
+		panx = map[0].panx;
+		pany = map[0].pany;
+
+		for (int frame=0; frame < num_frames; frame++) {
+			print_map(&map[frame], 1);
+			// TODO time of image
+			printf("q=quit  r=refresh space=next image  h=left  j=down  k=up  l=right  %s            ",
+				image_types[map[0].image_type] );
+			if(num_frames > 1) {
+				// One second sleep with early out if the map is panned
+				for(int i = 0; i < 1000; i++) {
+					if(done || panx != map[0].panx || pany != map[0].pany)
+						goto stop_rendering;
+					usleep(1000);
+				}
+			}
+		}
+stop_rendering:
+	}
+
+	return NULL;
+}
+
+// TODO Provide status message for download
 // TODO top level error checking
 int main(int argc, char **argv)
 {
-	struct map map;
+	pthread_t display_thread;
+	void * thread_ret;
 	struct args args;
 	int r = 0;
 	char img_dir[]="/tmp/tmp.XXXXXX";
 	char img_path[512];
+	int frame = 0;
+
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	unsigned long long now =
+		(unsigned long long)(tv.tv_sec) * 1000 +
+		(unsigned long long)(tv.tv_usec) / 1000;
 
 	getOptions(&args, argc, argv);
 
-	r = load_map(&map, args.map_file);
-	map.image_type = args.image_type;
+	if(args.animated)
+		num_frames = 10;
 
 	// Create dir for frames
 	mkdtemp(img_dir);
 
-	if(args.test_image) {
-		r = vt_one_hundrify(&map, args.test_image);
-	}
-	else {
-		// This will probably change with animation
-		sprintf(img_path, "%s/0.png", img_dir);
+	frame = 0;
+	do {
+		r = load_map(&map[frame], args.map_file);
+		map[frame].image_type = args.image_type;
 
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		unsigned long long now =
-			(unsigned long long)(tv.tv_sec) * 1000 +
-			(unsigned long long)(tv.tv_usec) / 1000;
-		r = download_weather_image(&map, now, img_path);
-		r = vt_one_hundrify(&map, img_path);
-    		remove(img_path);
-	}
+		if(args.test_image) {
+			r = vt_one_hundrify(&map[frame], args.test_image);
+		}
+		else {
+			unsigned long long frame_time = now;
 
-	map.panx = args.x;
-	map.pany = args.y;
-	map.renderw = args.w;
-	map.renderh = args.h;
+			if (args.animated)
+				frame_time -= (num_frames - frame - 1)*15*1000*60;
+
+			sprintf(img_path, "%s/%d.png", img_dir, num_frames - frame - 1);
+
+			r = download_weather_image(&map[frame], frame_time, img_path);
+			r = vt_one_hundrify(&map[frame], img_path);
+    			remove(img_path);
+		}
+
+		map[frame].panx = args.x;
+		map[frame].pany = args.y;
+		map[frame].renderw = args.w;
+		map[frame].renderh = args.h;
+	} while (++frame < num_frames);
+
+	for (int i=0; i < 100; i++)
+		printf("\n");
 
 	if(args.interactive) {
 		system("stty raw -echo");
 		printf(KCHD);
+		pthread_create(&display_thread, NULL, display_frames, NULL);
+
 		int key = 0;
 		while (key != 'q') { // TODO also esc
-			print_map(&map, 1);
-			printf("q=quit  r=refresh space=next image  h=left  j=down  k=up  l=right  %s            ", image_types[map.image_type] );
+			struct timeval tv;
+			gettimeofday(&tv, NULL);
+			unsigned long long now =
+				(unsigned long long)(tv.tv_sec) * 1000 +
+				(unsigned long long)(tv.tv_usec) / 1000;
 
+			// TODO print in different thread
 			key = getchar();
-			switch(key) {
-				case 'k': // TODO also up arrow
-					if (map.pany > 0)
-						map.pany--;
-					break;
-				case 'j': // TODO also down arrow
-					if (map.pany + map.renderh < map.h)
-						map.pany++;
-					break;
-				case 'h': // TODO also left arrow
-					if (map.panx > 0)
-						map.panx--;
-					break;
-				case 'l': // TODO also right arrow
-					if (map.panx + map.renderw < map.w)
-						map.panx++;
-					break;
-				case ' ':
-					map.image_type = map.image_type == num_image_types-1 ? 0: map.image_type + 1;
-				case 'r':
-					// This should probably be cleaner
-					sprintf(img_path, "%s/0.png", img_dir);
+			for (int frame=0; frame < num_frames; frame++) {
+				// TODO toggle animation
+				switch(key) {
+					case 'k': // TODO also up arrow
+						if (map[frame].pany > 0)
+							map[frame].pany--;
+						break;
+					case 'j': // TODO also down arrow
+						if (map[frame].pany + map[frame].renderh < map[frame].h)
+							map[frame].pany++;
+						break;
+					case 'h': // TODO also left arrow
+						if (map[frame].panx > 0)
+							map[frame].panx--;
+						break;
+					case 'l': // TODO also right arrow
+						if (map[frame].panx + map[frame].renderw < map[frame].w)
+							map[frame].panx++;
+						break;
+					case ' ':
+						map[frame].image_type = map[frame].image_type == num_image_types-1 ? 
+							0: map[frame].image_type + 1;
+					case 'r':
+						// This should probably be cleaner
+						sprintf(img_path, "%s/%d.png", img_dir, frame);
 
-					struct timeval tv;
-					gettimeofday(&tv, NULL);
-					unsigned long long now =
-						(unsigned long long)(tv.tv_sec) * 1000 +
-						(unsigned long long)(tv.tv_usec) / 1000;
-					r = download_weather_image(&map, now, img_path);
-					r = vt_one_hundrify(&map, img_path);
-    					remove(img_path);
-					break;
+						r = download_weather_image(&map[frame], now-frame*15*1000*60, img_path);
+						r = vt_one_hundrify(&map[frame], img_path);
+    						remove(img_path);
+						break;
+				}
 			}
 		}
+		done = 1;
+		pthread_join(display_thread, &thread_ret);
 		system("stty cooked echo");
 		printf("\n"KCSW);
 	}
-	else
-		print_map(&map, 0);
+	else {
+		frame = 0;
+		do {
+			print_map(&map[frame], args.animated);
+			sleep(1);
+		} while (++frame < num_frames);
+	}
 
 	remove(img_dir);
-	free_map(&map);
+
+	frame = 0;
+	do {
+		free_map(&map[frame]);
+	} while (++frame < num_frames);
 
 	return 0;
 }
+
+// TODO break up file
+// TODO handle sigterm

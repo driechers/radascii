@@ -136,10 +136,12 @@ int vt_one_hundrify_generic(struct map *map, char *filename)
 
 	if (4 != png_get_channels(png.png, png.info))
 		return -1; // not 4 channels
-	if (map->hpx != png_get_image_height(png.png, png.info))
-		return -2; // not the expected width
+	if (map->hpx != png_get_image_height(png.png, png.info)) {
+		printf("height %d expected %d\n", png_get_image_height(png.png, png.info), map->hpx);
+		return -2; // not the expected height
+	}
 	if (map->wpx != png_get_image_width(png.png, png.info))
-		return -3; // not the expected height
+		return -3; // not the expected width
 
 	for(int row=0; row < mH; row++)
 	for(int col=0; col < mW; col++) {
