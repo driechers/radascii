@@ -68,7 +68,6 @@ void key(void)
 }
 
 
-//TODO support looping
 //TODO support animation
 struct args
 {
@@ -122,10 +121,13 @@ void getOptions(struct args *args, int argc, char **argv)
 
 	// Process Args
 	// TODO long options
-	while((opt=getopt(argc, argv, "lahkIm:t:x:y:w:h:c:r:i:")) != -1 )  {
+	while((opt=getopt(argc, argv, "zlahkIm:t:x:y:w:h:c:r:i:")) != -1 )  {
 		switch(opt) {
 			case 'a':
 				args->animated = 1;
+				break;
+			case 'z':
+				args->loop = 1;
 				break;
 			case 'I':
 				args->interactive = 1;
@@ -326,11 +328,14 @@ int main(int argc, char **argv)
 		printf("\n"KCSW);
 	}
 	else {
-		frame = 0;
 		do {
-			print_map(&map[frame], args.animated);
-			sleep(1);
-		} while (++frame < num_frames);
+			frame = 0;
+			do {
+				print_map(&map[frame], args.animated);
+				if(args.animated)
+					sleep(1);
+			} while (++frame < num_frames);
+		} while(args.loop);
 	}
 
 	remove(img_dir);
