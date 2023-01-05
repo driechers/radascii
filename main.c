@@ -59,9 +59,6 @@ void key(void)
 		KNRM "   " KYEL "      " KRED "       " KMAG "            " KBLU "     " KCYN "       " KGRN "        " KNRM "\n"
 		"0 .2     7      60          370  500    777   (strikes/mi^2)/min x 10^3\n\n\n"
 
-#define KWHT  "\x1B[30m\x1B[107m"
-#define KLGRY "\x1B[30m\x1B[47m"
-#define KGRY  "\x1B[30m\x1B[100m"
 		"No Clouds    Partly Cloudy    Mostly Cloudy    Overcast\n"
 		"             " KGRY "                 " KLGRY "                 " KWHT "        " KNRM "\n"
 	      );
@@ -270,9 +267,6 @@ int main(int argc, char **argv)
 		map[frame].renderw = args.w;
 		map[frame].renderh = args.h;
 	} while (++frame < num_frames);
-
-	for (int i=0; i < 100; i++)
-		printf("\n");
 
 	if(args.interactive) {
 		system("stty raw -echo");
