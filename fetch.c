@@ -5,7 +5,7 @@
 
 // TODO generate more of the url from map ie image size, bbox
 static const char * image_type_urls[] = {
-	[radar] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
+	[radar] = "https://nowcoast.noaa.gov/geoserver/weather_radar/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%%2Fpng8&TRANSPARENT=true&LAYERS=base_reflectivity_mosaic&STYLES=%s&CRS=EPSG%%3A3857&WIDTH=941&HEIGHT=513&BBOX=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195",
 	[clouds] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/sat_meteo_imagery_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A11%%2C23&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
 	[lightning] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/sat_meteo_emulated_imagery_lightningstrikedensity_goes_time/MapServer/export?dpi=96&transparent=true&format=png8&layers=show%%3A3&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
 	[surface_temp] = "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%%3A11&time=%llu%%2C%llu&bbox=-15290014.707599312%%2C2603370.6826554714%%2C-6083327.524708849%%2C7622531.70797195&bboxSR=3857&imageSR=3857&size=941%%2C513&f=image",
@@ -35,16 +35,23 @@ static const char * image_type_urls[] = {
 
 
 // TODO error checking
-int download_image(const char *fmt, unsigned long long time, char *file_path)
+int download_image(const char *fmt, time_t time, char *file_path)
 {
 	CURL *curl;
 	FILE *fp;
 	CURLcode res;
 	char url[512];
 	char fileName[11];
+	char tstr[64] = "";
+	struct tm *tm;
 
-	snprintf(url, 512, fmt, time, time);
-	//printf("%s\n", url);
+	if(time) {
+		tm = gmtime(&time);
+		strftime(tstr, sizeof(tstr), "&time=%Y-%m-%dT%H%%3A%M%%3A%S.000Z", tm);
+	}
+
+	snprintf(url, 512, fmt, tstr);
+	printf("%s\n", url);
 
 	curl = curl_easy_init();
 	if (curl) {
@@ -60,7 +67,7 @@ int download_image(const char *fmt, unsigned long long time, char *file_path)
 	return 0;
 }
 
-int download_weather_image(struct map *map, unsigned long long time, char *file_path)
+int download_weather_image(struct map *map, time_t time, char *file_path)
 {
 	if(image_type_urls[map->image_type])
 		return download_image(image_type_urls[map->image_type], time, file_path);

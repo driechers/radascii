@@ -226,12 +226,10 @@ int main(int argc, char **argv)
 	char img_dir[]="/tmp/tmp.XXXXXX";
 	char img_path[512];
 	int frame = 0;
+	time_t now = 0;
+	time_t frame_time = 0;
 
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	unsigned long long now =
-		(unsigned long long)(tv.tv_sec) * 1000 +
-		(unsigned long long)(tv.tv_usec) / 1000;
+	time(&now);
 
 	getOptions(&args, argc, argv);
 
@@ -250,10 +248,10 @@ int main(int argc, char **argv)
 			r = vt_one_hundrify(&map[frame], args.test_image);
 		}
 		else {
-			unsigned long long frame_time = now;
+			frame_time = now;
 
 			if (args.animated)
-				frame_time -= (num_frames - frame - 1)*15*1000*60;
+				frame_time -= (num_frames - frame - 1)*15*60;
 
 			sprintf(img_path, "%s/%d.png", img_dir, num_frames - frame - 1);
 
@@ -275,11 +273,7 @@ int main(int argc, char **argv)
 
 		int key = 0;
 		while (key != 'q') { // TODO also esc
-			struct timeval tv;
-			gettimeofday(&tv, NULL);
-			unsigned long long now =
-				(unsigned long long)(tv.tv_sec) * 1000 +
-				(unsigned long long)(tv.tv_usec) / 1000;
+			time(&now);
 
 			// TODO print in different thread
 			key = getchar();
@@ -308,8 +302,9 @@ int main(int argc, char **argv)
 					case 'r':
 						// This should probably be cleaner
 						sprintf(img_path, "%s/%d.png", img_dir, frame);
+						frame_time = now-frame*15*60;
 
-						r = download_weather_image(&map[frame], now-frame*15*1000*60, img_path);
+						r = download_weather_image(&map[frame], frame_time, img_path);
 						r = vt_one_hundrify(&map[frame], img_path);
     						remove(img_path);
 						break;
